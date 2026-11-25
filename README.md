@@ -1,6 +1,10 @@
-# DeepSeek 网页翻译（Edge / Chrome 扩展）
+# DeepSeek 网页翻译 · DeepSeek Web Translator
+
+**中文** | [English](#english)
 
 用 DeepSeek 大模型实时翻译整个网页。双语对照、仅译文、动态内容跟随、划词翻译，全部在本地运行。
+
+Real-time full-page translation powered by the DeepSeek large language model. Bilingual view, translation-only mode, live translation of dynamic content, and select-to-translate — everything runs locally in your browser.
 
 ---
 
@@ -109,13 +113,13 @@
 
 ```
 edge-deepseek-translator/
-├── manifest.json     扩展清单（MV3）
+├── manifest.json     扩展清单（MV3）/ extension manifest
 ├── background.js     Service Worker：调用 DeepSeek 接口、右键菜单、快捷键、角标
 ├── content.js        页面内翻译引擎：采集段落、分批、写回译文、动态监听、悬浮球、划词
 ├── content.css       译文与提示条样式
 ├── shared.js         公共常量与设置读写
-├── popup.html/css/js 工具栏弹窗
-├── options.html/css/js 设置页
+├── popup.html/css/js 工具栏弹窗 / toolbar popup
+├── options.html/css/js 设置页 / options page
 ├── icons/            图标 16/32/48/128/256
 ├── make_icons.py     图标生成脚本（PIL，重新生成用）
 └── tests/
@@ -133,3 +137,145 @@ edge-deepseek-translator/
 ## 八、免责
 
 译文由 DeepSeek 生成，可能存在误译，重要内容（合同、医疗、法律）请以原文为准。使用产生的 API 费用由你的 DeepSeek 账号承担。
+
+---
+---
+
+<a id="english"></a>
+
+# DeepSeek Web Translator (Edge / Chrome Extension)
+
+[中文](#deepseek-网页翻译--deepseek-web-translator) | **English**
+
+Real-time full-page translation powered by the DeepSeek large language model. Bilingual view, translation-only mode, live translation of dynamic content, and select-to-translate — everything runs locally in your browser.
+
+---
+
+## 1. Install (3 steps, 1 minute)
+
+1. Open Edge and go to `edge://extensions/`.
+2. Turn on **Developer mode** (the toggle at the bottom-left).
+3. Click **Load unpacked** and pick this folder — `edge-deepseek-translator`, the one that contains `manifest.json`.
+
+After installing, click the puzzle icon 🧩 in the toolbar and pin **DeepSeek 网页翻译** next to the address bar.
+
+> Chrome works the same way: open `chrome://extensions/`, enable Developer mode, then click **Load unpacked**.
+
+---
+
+## 2. Configure the API Key
+
+The options page opens automatically on first install. If it doesn't, click the extension icon → **「设置」** (Settings) at the bottom of the popup.
+
+1. Go to <https://platform.deepseek.com/api_keys>, sign in, create a key, and copy the `sk-xxxxxxxx` string.
+2. Paste it into the **API Key** field.
+3. Click **「测试连接」** (Test connection). A green "连接成功 · deepseek-chat · xxx ms" means you're good.
+
+**"Free tier" and "4.1" explained**
+
+| What you might expect | Reality |
+| --- | --- |
+| DeepSeek web chat (the free website) | Free, but it exposes no public keyless API, so this extension can't call it |
+| Open Platform API (what this extension uses) | Pay-per-token, but the unit price is very low — everyday browsing usually costs pennies. See <https://platform.deepseek.com> for current pricing and new-user credits |
+| I want zero cost | If you already have a third-party free or proxy endpoint, set **「接口地址」** (Base URL) to their address, use their key, and fill in the model name as their docs specify |
+
+About the model name: the default is `deepseek-chat`, which points at the current general-purpose chat model and follows official upgrades (V3.x / V4 line). If your account can access a newer model (for example the official 4.1 release), just type its name into the **「模型」** (Model) field — it's free text, not a fixed dropdown.
+
+`deepseek-reasoner` (the reasoning model) also works. It translates more accurately but is slower and more expensive; usually not necessary.
+
+---
+
+## 3. How to use
+
+| Action | How |
+| --- | --- |
+| Translate / restore this page | Click the toolbar icon → **「翻译此页」**; or press `Alt` + `A`; or click the floating ball at the bottom-right |
+| Change target language | **「翻译成」** (Translate to) in the popup, or the options page |
+| Bilingual / translation only | **「显示方式」** (Display mode) in the popup |
+| Select to translate | Select any text; a translation bubble appears automatically |
+| Context menu | Right-click selected text → **「DeepSeek 翻译选中文本」**; right-click empty space → **「翻译 / 还原此页」** |
+
+- The floating ball can be dragged anywhere; its position is remembered.
+- **Auto-resume after navigation**: clicking a link on the same tab, or a client-side route change in a SPA, translates the new page automatically — no second click needed. It only applies within the same site; jumping to a different site stops it, and manually turning translation off for a tab disables auto-resume there.
+- New content loaded by scrolling is translated automatically.
+- While translating, the floating ball spins and shows progress, then turns purple. Click it again to restore the original page.
+
+To change the shortcut, visit `edge://extensions/shortcuts`.
+
+---
+
+## 4. Settings explained
+
+| Setting | Recommendation |
+| --- | --- |
+| Target language | Simplified Chinese by default |
+| Display mode | "Bilingual" is the most practical; "Translation only" hides the original (reversible anytime) |
+| Concurrent requests | Default 2. Drop to 1 if you hit 429 rate limits |
+| Characters per batch | Default 2400. Larger means fewer requests but slower batches and more timeout risk |
+| Extra instructions | Locks terminology and style, e.g. "keep technical terms in English with a Chinese gloss; transliterate personal names consistently" |
+| Auto-translate | Off by default. When on, every page is translated on load and keeps consuming credits |
+| Resume after navigation | On by default. Auto-translates when you follow a link or a route changes, limited to the current tab and site |
+
+---
+
+## 5. FAQ
+
+**I clicked translate and nothing happened.**
+First check whether the floating ball appears at the bottom-right. If it doesn't, the content script wasn't injected: browser-internal pages (`edge://`, `chrome://`) and the Edge Add-ons store block all extensions — that's a browser restriction, not a bug. Regular http/https sites are supported.
+
+**401 / invalid API Key**
+The key was copied incorrectly or has been deleted. Paste it again on the options page, making sure there are no extra spaces; you can also click **「测试连接」** to verify it separately.
+
+**402 insufficient balance**
+Your Open Platform account is out of credit. Top it up.
+
+**429 too many requests**
+Set "Concurrent requests" to 1 in settings and wait a minute.
+
+**Translations appear twice**
+The page framework re-rendered the text. Click restore once, then translate again. If it keeps happening on a specific site, tell me and I'll adjust — adding `translate="no"` to that site's markup isn't something end users can do.
+
+**Some blocks aren't translated**
+Code blocks (`pre`, `code`), input fields, and elements marked `translate="no"` or `class="notranslate"` are skipped on purpose, so page behavior and code copying stay intact.
+
+**Translation is slow**
+The first full-page pass sends text in paragraph batches, so longer pages take longer. Translating the article page alone helps; repeat visits to similar pages hit the cache.
+
+---
+
+## 6. Privacy
+
+- The API Key lives only in `chrome.storage.local` — your own browser's local storage. It is never synced to the cloud and never sent to any server other than the API endpoint you configure.
+- Only the page's **body text** is sent to the model. No browsing history, cookies, or form contents.
+- Page structure, scripts, and images are never uploaded.
+- Everything runs locally in the browser: no self-hosted server, no analytics, no telemetry.
+
+---
+
+## 7. Project structure
+
+```
+edge-deepseek-translator/
+├── manifest.json     extension manifest (MV3)
+├── background.js     service worker: DeepSeek API calls, context menus, shortcuts, badge
+├── content.js        in-page engine: collect segments, batch, write back, observe, floating ball, selection
+├── content.css       styles for translations and the notice bar
+├── shared.js         shared constants and settings I/O
+├── popup.html/css/js toolbar popup
+├── options.html/css/js options page
+├── icons/            16/32/48/128/256 px icons
+├── make_icons.py     icon generator (PIL; regenerate icons)
+└── tests/
+    └── logic.test.js core logic assertions (node tests/logic.test.js, 28 checks)
+```
+
+> Note: the extension folder **must not contain files or directories starting with `_`** — Chrome/Edge refuses to load them (that naming is reserved for the system). That's why the test folder is `tests`, not `_tests`. Don't rename it back.
+
+To restyle: the translation block look lives in `.dsk-trans` inside `content.css` — border color, indent, opacity.
+To change the prompt: `SYSTEM_TEMPLATE` in `background.js` holds the translation rules; reload the extension from `edge://extensions/` after editing.
+
+---
+
+## 8. Disclaimer
+
+Translations are generated by DeepSeek and may contain errors. For anything important (contracts, medical, legal), rely on the original text. API costs are billed to your own DeepSeek account.
