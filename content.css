@@ -1,0 +1,143 @@
+/* ==========================================================================
+   DeepSeek 网页翻译 —— 注入到页面的样式
+   全部使用 !important，避免被站点样式覆盖
+   ========================================================================== */
+
+/* 译文块：紧跟在原文之后，<块级> 显示形成对照 */
+.dsk-trans {
+  display: block !important;
+  margin: 0.14em 0 0.1em !important;
+  padding: 0 0 0 0.6em !important;
+  border-left: 2px solid rgba(99, 102, 241, 0.55) !important;
+  color: inherit !important;
+  background: transparent !important;
+  font-family: inherit !important;
+  font-size: inherit !important;
+  font-style: normal !important;
+  font-weight: inherit !important;
+  line-height: 1.55 !important;
+  text-align: inherit !important;
+  text-decoration: none !important;
+  text-transform: none !important;
+  letter-spacing: normal !important;
+  white-space: pre-wrap !important;
+  word-break: break-word !important;
+  overflow-wrap: anywhere !important;
+  opacity: 1 !important;
+  float: none !important;
+  position: static !important;
+  unicode-bidi: isolate !important;
+  -webkit-text-fill-color: currentColor;
+}
+
+/* 标题里的译文稍收敛一点，别太抢眼 */
+h1 > .dsk-trans,
+h2 > .dsk-trans,
+h3 > .dsk-trans {
+  font-weight: normal !important;
+  opacity: 0.92 !important;
+}
+
+/* 短文案 / 导航链接：译文行内接在原文后面，避免把一行撑成两行 */
+.dsk-trans.dsk-inline {
+  display: inline !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border-left: 0 !important;
+  white-space: normal !important;
+  /* 中文尽量整词换行，别出现「支持手/柄」这种断字 */
+  word-break: keep-all !important;
+  overflow-wrap: anywhere !important;
+  opacity: 0.85 !important;
+}
+
+.dsk-trans.dsk-inline::before {
+  content: "·";
+  margin: 0 0.35em;
+  color: #9aa3b8;
+}
+
+/* 顶替了原文的短文案：就地显示，不要蓝色竖线，也不要圆点分隔符 */
+.dsk-trans.dsk-replaced {
+  display: inline !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border-left: 0 !important;
+  white-space: normal !important;
+  word-break: keep-all !important;
+  overflow-wrap: anywhere !important;
+  opacity: 1 !important;
+}
+
+.dsk-trans.dsk-replaced::before {
+  content: none !important;
+  margin: 0 !important;
+}
+
+/* 被 line-clamp 截断的元素（卡片标题等）：译文放到元素外侧另起一行 */
+.dsk-trans.dsk-after {
+  display: block !important;
+  margin: 0.1em 0 0.2em !important;
+  padding: 0 !important;
+  border-left: 0 !important;
+  font-size: 0.9em !important;
+  line-height: 1.45 !important;
+  opacity: 0.92 !important;
+  /* 父级是 grid 时不要挤进一个小格子 */
+  grid-column: 1 / -1 !important;
+}
+
+/* 译文落在链接/按钮内部时，别让它成为点击目标：
+   事件直接落到外层的 <a>/<button> 上，链接永远不会因为翻译而点不动 */
+.dsk-trans.dsk-inhit {
+  pointer-events: none !important;
+  cursor: inherit !important;
+}
+
+/* 表格单元格里的译文不要撑太高 */
+td > .dsk-trans,
+th > .dsk-trans {
+  border-left-width: 2px !important;
+  margin: 0.08em 0 0 !important;
+}
+
+/* “仅译文”模式下被收起的原文 */
+.dsk-orig {
+  display: none !important;
+}
+
+/* ==========================================================================
+   底部提示条
+   ========================================================================== */
+.dsk-toast {
+  position: fixed !important;
+  left: 50% !important;
+  bottom: 28px !important;
+  transform: translate(-50%, 16px) !important;
+  z-index: 2147483647 !important;
+  max-width: min(560px, calc(100vw - 40px)) !important;
+  padding: 10px 16px !important;
+  border-radius: 10px !important;
+  background: rgba(24, 26, 36, 0.94) !important;
+  color: #e5e7eb !important;
+  border: 1px solid rgba(120, 140, 255, 0.3) !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35) !important;
+  font: 13px/1.6 -apple-system, "Segoe UI", system-ui, "Microsoft YaHei", sans-serif !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transition: opacity 0.22s ease, transform 0.22s ease !important;
+}
+
+.dsk-toast.dsk-toast-show {
+  opacity: 1 !important;
+  transform: translate(-50%, 0) !important;
+}
+
+.dsk-toast[data-kind="error"] {
+  border-color: rgba(248, 113, 113, 0.55) !important;
+  background: rgba(60, 20, 24, 0.95) !important;
+}
+
+.dsk-toast[data-kind="warn"] {
+  border-color: rgba(251, 191, 36, 0.5) !important;
+}

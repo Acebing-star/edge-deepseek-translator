@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>DeepSeek 网页翻译 · 设置</title>
+  <link rel="stylesheet" href="options.css" />
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="logo">译</div>
+      <div>
+        <h1>DeepSeek 网页翻译</h1>
+        <p class="sub">用 DeepSeek 大模型实时翻译网页 · 设置</p>
+      </div>
+    </header>
+
+    <section class="card">
+      <h2>接口</h2>
+
+      <div class="row">
+        <label for="apiKey">API Key <span class="req">必填</span></label>
+        <div class="inline">
+          <input id="apiKey" type="password" placeholder="sk-xxxxxxxxxxxxxxxx" autocomplete="off" spellcheck="false" />
+          <button id="toggleKey" class="ghost" type="button">显示</button>
+        </div>
+        <p class="hint">
+          在 <a href="https://platform.deepseek.com/api_keys" target="_blank" rel="noreferrer">platform.deepseek.com</a>
+          创建。密钥只保存在本机浏览器存储里，除 DeepSeek 接口外不会发往任何地方。
+        </p>
+      </div>
+
+      <div class="row">
+        <label for="baseUrl">接口地址</label>
+        <input id="baseUrl" type="text" placeholder="https://api.deepseek.com" spellcheck="false" />
+        <p class="hint">官方地址是 <code>https://api.deepseek.com</code>。若使用中转/代理服务，改成对方给的地址即可（会自动补 <code>/chat/completions</code>）。</p>
+      </div>
+
+      <div class="row">
+        <label for="model">模型</label>
+        <input id="model" type="text" list="modelList" placeholder="deepseek-chat" spellcheck="false" />
+        <datalist id="modelList"></datalist>
+        <p class="hint">默认 <code>deepseek-chat</code>（通用对话模型，速度与成本最平衡）。也可填 <code>deepseek-reasoner</code>，或服务商提供的其他模型名。</p>
+      </div>
+
+      <div class="row">
+        <button id="testBtn" class="ghost" type="button">测试连接</button>
+        <span id="testResult" class="test-result"></span>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>翻译</h2>
+
+      <div class="grid2">
+        <div class="row">
+          <label for="targetLang">目标语言</label>
+          <select id="targetLang"></select>
+        </div>
+
+        <div class="row">
+          <label for="mode">显示方式</label>
+          <select id="mode">
+            <option value="bilingual">双语对照（原文 + 译文）</option>
+            <option value="replace">仅显示译文</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row">
+        <label class="switch">
+          <input id="shortTextReplace" type="checkbox" />
+          <span>导航、按钮、标签等短文案直接显示译文（不保留原文）</span>
+        </label>
+        <p class="hint">开启后侧栏导航、分类、按钮会变成纯中文；正文仍是原文 + 译文对照。关闭则所有地方都保留原文。</p>
+      </div>
+
+      <div class="row">
+        <label for="customPrompt">附加要求（可选）</label>
+        <textarea id="customPrompt" rows="3" placeholder="例如：技术术语保留英文，只在括号里给中文；人名统一音译；语气保持正式。"></textarea>
+        <p class="hint">会追加到系统提示词里，用来统一术语和风格。</p>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>性能与体验</h2>
+
+      <div class="grid2">
+        <div class="row">
+          <label for="concurrency">并发请求数</label>
+          <select id="concurrency">
+            <option value="1">1（最稳，慢）</option>
+            <option value="2">2（推荐）</option>
+            <option value="3">3（快，易触限流）</option>
+            <option value="4">4（最快，容易 429）</option>
+          </select>
+        </div>
+
+        <div class="row">
+          <label for="chunkChars">每批字符上限</label>
+          <input id="chunkChars" type="number" min="600" max="8000" step="200" />
+        </div>
+      </div>
+
+      <div class="row">
+        <label class="switch">
+          <input id="showFloatButton" type="checkbox" />
+          <span>在页面右下角显示悬浮球</span>
+        </label>
+        <label class="switch">
+          <input id="selectionTranslate" type="checkbox" />
+          <span>选中文字后弹窗翻译（划词翻译）</span>
+        </label>
+        <label class="switch">
+          <input id="autoTranslate" type="checkbox" />
+          <span>打开网页后自动翻译（会持续消耗额度）</span>
+        </label>
+        <label class="switch">
+          <input id="autoResume" type="checkbox" />
+          <span>页面内跳转后继续翻译（点链接换页不用再点一次）</span>
+        </label>
+      </div>
+
+      <p class="hint">「页面内跳转后继续翻译」只在同一标签页、同一网站内生效；换到别的网站会自动停下，不会悄悄烧额度。手动点悬浮球关闭翻译后，该标签页也不再自动续翻。</p>
+
+      <p class="hint">快捷键 <kbd>Alt</kbd>+<kbd>A</kbd> 翻译/还原当前页。可在 <code>edge://extensions/shortcuts</code> 修改。</p>
+    </section>
+
+    <div class="actions">
+      <button id="saveBtn" class="primary" type="button">保存设置</button>
+      <button id="resetBtn" class="ghost" type="button">恢复默认</button>
+      <span id="saveTip" class="save-tip"></span>
+    </div>
+
+    <footer>
+      <p>译文由 DeepSeek 生成，可能存在偏差，重要内容请以原文为准。</p>
+    </footer>
+  </div>
+
+  <script src="shared.js"></script>
+  <script src="options.js"></script>
+</body>
+</html>

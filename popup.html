@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>DeepSeek 网页翻译</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <header class="head">
+    <div class="brand">
+      <div class="logo">译</div>
+      <div>
+        <h1>DeepSeek 网页翻译</h1>
+        <p id="modelLine" class="sub">—</p>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <button id="toggleBtn" class="primary">翻译此页</button>
+
+    <div id="statusLine" class="status">读取中…</div>
+
+    <div class="field">
+      <label for="langSel">翻译成</label>
+      <select id="langSel"></select>
+    </div>
+
+    <div class="field">
+      <label for="modeSel">显示方式</label>
+      <select id="modeSel">
+        <option value="bilingual">双语对照（原文 + 译文）</option>
+        <option value="replace">仅显示译文</option>
+      </select>
+    </div>
+
+    <div id="warn" class="warn hidden"></div>
+  </main>
+
+  <footer>
+    <a href="#" id="optionsLink">设置 API Key / 高级选项</a>
+    <span id="ver" class="ver"></span>
+  </footer>
+
+  <script src="shared.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
